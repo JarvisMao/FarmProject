@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - BoundsConfiner
+  - ItemParent
+  - CursorCanvas
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Ground Bottom
+    uniqueID: 2053788595
+    locked: 0
+  - name: Ground Middle
+    uniqueID: 4198468835
+    locked: 0
+  - name: Ground Top
+    uniqueID: 1659755217
+    locked: 0
+  - name: Stuff 1
+    uniqueID: 3488760475
+    locked: 0
+  - name: Stuff 2
+    uniqueID: 3950523689
+    locked: 0
+  - name: Dig
+    uniqueID: 4109152557
+    locked: 0
+  - name: Water
+    uniqueID: 1149012007
+    locked: 0
+  - name: Instance
+    uniqueID: 2910539331
+    locked: 0
+  - name: Front 1
+    uniqueID: 3991778749
+    locked: 0
+  - name: Front 2
+    uniqueID: 428928493
+    locked: 0
+  - name: Collision
+    uniqueID: 340787887
+    locked: 0
