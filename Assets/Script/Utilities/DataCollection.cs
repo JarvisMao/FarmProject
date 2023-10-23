@@ -92,8 +92,9 @@ public class TileDetails
     public bool canDropItem;
     public bool canPlaceFurniture;
     public bool isNPCObstacle;
-    public int daySinceDug = -1;
-    public int daySinceWatered = -1;
+    public int daysSinceDug = -1;
+    public int daysSinceWatered = -1;
     public int seedItemID = -1;
-    public int daySinceHarvested = -1;
+    public int daysSinceHarvested = -1;
+    public int growthDays = -1;
 }

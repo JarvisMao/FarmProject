@@ -34,6 +34,22 @@ public class TimeManager : MonoBehaviour
                 UpdateGameTime();
             }
         }
+
+        //TEST：加快时间流逝
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            for (int i = 0; i < 60; i++)
+            {
+                UpdateGameTime();
+            }
+        }
+        //TEST：跳过一天
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            gameDay++;
+            EventHandler.CallGameDayEvent(gameDay, gameSeason);
+            EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);
+        }
     }
 
     private void NewGameTime()
@@ -97,6 +113,8 @@ public class TimeManager : MonoBehaviour
                                 gameYear = 2023;
                             }
                         }
+                        //用于刷新地图和农作物生长
+                        EventHandler.CallGameDayEvent(gameDay, gameSeason);
                     }
                 }
                 EventHandler.CallGameDateEvent(gameHour, gameDay, gameMonth, gameYear, gameSeason);

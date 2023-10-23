@@ -27,7 +27,7 @@ namespace MFarm.Inventory
         private void Start()
         {
             isSelected = false;
-            if (itemDetails.itemID == 0)
+            if (itemDetails == null)
             {
                 UpdateEmptySlot();
             }
@@ -57,7 +57,11 @@ namespace MFarm.Inventory
             if (isSelected)
             {
                 isSelected = false;
+
+                inventoryUI.UpdateSlotHighlight(-1);
+                EventHandler.CallItemSelectedEvent(itemDetails, isSelected);
             }
+            itemDetails = null;
             slotImage.enabled = false;
             amountText.text = string.Empty;
             button.interactable = false;
@@ -65,7 +69,7 @@ namespace MFarm.Inventory
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (itemAmount == 0) return;
+            if (itemDetails == null) return;
             isSelected = !isSelected;
 
             inventoryUI.UpdateSlotHighlight(slotIndex);
@@ -97,9 +101,6 @@ namespace MFarm.Inventory
 
         public void OnEndDrag(PointerEventData eventData)
         {
-
-
-
             inventoryUI.dragItem.enabled = false;
             Debug.Log(eventData.pointerCurrentRaycast.gameObject);
             // Debug.Log(eventData.pointerCurrentRaycast.gameObject);

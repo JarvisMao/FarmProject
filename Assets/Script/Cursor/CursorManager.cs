@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using MFarm.Map;
 
 public class CursorManager : MonoBehaviour
 {
@@ -20,6 +21,11 @@ public class CursorManager : MonoBehaviour
     private Vector3Int mouseGridPos;
 
     private bool cursorEnable;
+    private bool cursorPositionValid;
+
+    private ItemDetails currentItem;
+
+    private Transform PlayerTransform => FindObjectOfType<Player>().transform;
 
     private void OnEnable()
     {
@@ -56,6 +62,7 @@ public class CursorManager : MonoBehaviour
         {
             SetCursorImage(currentSprite);
             CheckCursorValid();
+            CheckPlayerInput();
         }
         else
         {
@@ -63,6 +70,16 @@ public class CursorManager : MonoBehaviour
         }
     }
 
+    private void CheckPlayerInput()
+    {
+        if (Input.GetMouseButtonDown(0) && cursorPositionValid)
+        {
+            //执行方法
+            EventHandler.CallMouseClickedEvent(mouseWorldPos, currentItem);
+        }
+    }
+
+    #region 设置鼠标样式
     /// <summary>
     /// 设置鼠标图片
     /// </summary>
@@ -74,6 +91,24 @@ public class CursorManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 设置鼠标可用
+    /// </summary>
+    private void SetCursorValid()
+    {
+        cursorPositionValid = true;
+        cursorImage.color = new Color(1, 1, 1, 1);
+    }
+
+    /// <summary>
+    /// 设置鼠标不可用
+    /// </summary>
+    private void SetCursorInvalid()
+    {
+        cursorPositionValid = false;
+        cursorImage.color = new Color(1, 0, 0, 0.4f);
+    }
+    #endregion
+    /// <summary>
     /// 物品选择事件函数
     /// </summary>
     /// <param name="itemDetails"></param>
@@ -82,10 +117,14 @@ public class CursorManager : MonoBehaviour
     {
         if (!isSelected)
         {
+            currentItem = null;
+            cursorEnable = false;
             currentSprite = normal;
         }
         else    //物品被选中才切换图片
         {
+            currentItem = itemDetails;
+
             //WORKFLOW:添加所有类型对应图片
             currentSprite = itemDetails.itemType switch
             {
@@ -99,6 +138,8 @@ public class CursorManager : MonoBehaviour
                 ItemType.Furniture => tool,
                 _ => normal,
             };
+
+            cursorEnable = true;
         }
     }
 
@@ -109,7 +150,7 @@ public class CursorManager : MonoBehaviour
     private void OnAfterSceneLoadedEvent()
     {
         currentGrid = FindObjectOfType<Grid>();
-        cursorEnable = true;
+        // cursorEnable = true;
     }
 
 
@@ -118,7 +159,43 @@ public class CursorManager : MonoBehaviour
         mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -mainCamera.transform.position.z));
         mouseGridPos = currentGrid.WorldToCell(mouseWorldPos);
 
-        Debug.Log("WorldPos" + mouseWorldPos + "    GridPos" + mouseGridPos);
+        var playerGridPos = currentGrid.WorldToCell(PlayerTransform.position);
+
+        //判断在使用范围内
+        if (Vector3Int.Distance(mouseGridPos, playerGridPos) > currentItem.itemUseRadius)
+        {
+            SetCursorInvalid();
+            return;
+        }
+
+        TileDetails currentTile = GridMapManager.Instance.GetTileDetailsOnMousePosition(mouseGridPos);
+
+        if (currentTile != null)
+        {
+            switch (currentItem.itemType)
+            {
+                //WORKFLOW:补充所有类型的判断
+                case ItemType.Commodity:
+                    if (currentTile.canDropItem && currentItem.canDropped) SetCursorValid(); else SetCursorInvalid();
+                    break;
+                case ItemType.Seed:
+                    if (currentTile.daysSinceDug > -1 && currentTile.seedItemID == -1) SetCursorValid(); else SetCursorInvalid();
+                    break;
+                case ItemType.Furniture:
+                    if (currentTile.canPlaceFurniture && currentItem.canDropped) SetCursorValid(); else SetCursorInvalid();
+                    break;
+                case ItemType.HoeTool:
+                    if (currentTile.canDig) SetCursorValid(); else SetCursorInvalid();
+                    break;
+                case ItemType.WaterTool:
+                    if (currentTile.daysSinceDug > -1 && currentTile.daysSinceWatered == -1) SetCursorValid(); else SetCursorInvalid();
+                    break;
+            }
+        }
+        else
+        {
+            SetCursorInvalid();
+        }
     }
 
     /// <summary>
